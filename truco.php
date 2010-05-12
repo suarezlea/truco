@@ -149,17 +149,21 @@ class Mazo
 class Percepcion
 {
     /**
+     * Cartas propias percibidas
+     * @var array
+     */
+    public $cartasPropias;
+    /**
      * Carta jugada y percibida
-     * 
      * @var Carta
      */
-	public $carta;
+	public $cartaOponente;
 	
 	/**
-	 * Canto del oponente y percibido
+	 * Canto del oponente percibido
 	 * @var unknown_type
 	 */
-	public $canto;
+	public $cantoOponente;
 }
 
 class Agente extends Jugador
