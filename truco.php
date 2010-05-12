@@ -175,7 +175,7 @@ class Agente extends Jugador
      */
 	public function __construct()
 	{
-	    $this->programa = $this->_crearProgramaAgente();
+	    //$this->programa = $this->_crearProgramaAgente();
 	}
 	
 	/**
