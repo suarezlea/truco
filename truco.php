@@ -232,10 +232,10 @@ class Agente extends Jugador
 	}
 	
 	/**
-	 * Juega la carta en su turno
+	 * Juega la carta en su turno.
 	 * @param Mano $mano
 	 */
-	public function jugarCarta($mano)
+	public function turno($mano)
 	{
 		if ($mano->esPrimeraDeRonda()) {	
 			$carta = $this->cartaMasAlta($mano);
@@ -305,7 +305,7 @@ class Humano extends Jugador
 	 * al grupo de cartas jugadas en la mano
 	 * @param Mano $mano
 	 */
-    public function jugarCarta($mano) 
+    public function turno($mano) 
     {
         echo 'Ingrese numero de carta a jugar (0, 1, 2): ' . "\n";			
 		$carta = trim(fgets(STDIN));
@@ -349,10 +349,10 @@ abstract class Jugador
 	abstract public function recibirCarta($carta);
 	
 	/**
-	 * Juega una carta spbre la mesa
+	 * Decide y ejecuta una accion en su turno
 	 * @param Mano $mano
 	 */
-	abstract public function jugarCarta($mano);
+	abstract public function turno($mano);
 	
 	/**
 	 * Devuelva la carta indicada por el subíndice
@@ -492,7 +492,7 @@ class Juego
         $manoActual = $this->manoActual();
 		
 		while (!$manoActual->termino()) {
-			$this->jugarCarta();
+			$this->turno();
 		}
 		
 		$this->humano->devolverCartas();
@@ -502,11 +502,11 @@ class Juego
 	/**
 	 * Se juega una carta por cada ronda
 	 */
-	public function jugarCarta()	
+	public function turno()	
 	{
 		$jugador = $this->quienJuega();
 				
-		$jugador->jugarCarta($this->manoActual());
+		$jugador->turno($this->manoActual());
 	}
 	
 	/**
