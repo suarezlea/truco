@@ -166,6 +166,49 @@ class Percepcion
 	public $cantoOponente;
 }
 
+class ProgramaAgenteReactivoSimple
+{
+    public function __invoke($percepcion)
+    {
+        $accion = null;
+        if ($percepcion->cartaOponente) {
+    		// retorna la carta mas baja que mata a la carta del 
+    		// oponente o en caso de no poder matar retorna la carta 
+    		// mas baja de todas
+    		$accion = 
+    		    $this->_cartaMasBaja(
+    		        $percepcion->cartasPropias, 
+    		        $percepcion->cartaOponente
+    		    );
+    	
+    	} elseif ($percepcion->cantoOponente) {
+    	    //todavia no hacemos nada
+    	} else {
+    	    //Si tiene que jugar alguna carta, por descarte juega 
+    	    //la mas alta
+    		$accion = $this->_cartaMasAlta($percepcion->cartasPropias);
+    	}   
+
+    	return $accion;
+    }
+    
+    private function _cartaMasBaja($cartasPropias, $cartaOponente)
+	{
+		foreach ($cartasPropias as $k => $c) {
+			if ($c->valor() > $cartaOponente->valor()) {
+				return 'carta' . ($k + 1);
+			}
+		}
+		
+		return 'carta' . (key(reset($cartasPropias)) + 1);
+	}
+	
+    private function _cartaMasAlta($cartas)
+	{
+		return 'carta' . (key(end($cartas)) + 1);
+	}
+}
+
 class Agente extends Jugador
 {
     /**
@@ -179,7 +222,7 @@ class Agente extends Jugador
      */
 	public function __construct()
 	{
-	    //$this->programa = $this->_crearProgramaAgente();
+	    $this->programa = $this->_crearProgramaAgente();
 	}
 	
 	/**
@@ -187,23 +230,7 @@ class Agente extends Jugador
 	 */
 	protected function _crearProgramaAgente()
 	{
-	    return 
-		    function ($percepcion)
-		    {
-				if ($percepcion->carta) {
-					
-					// retorna la carta mas baja que mata a la carta del 
-					// oponente o en caso de no poder matar retorna la carta 
-					// mas baja de todas
-					return "carta" . $this->cartaMasBaja($percepcion->carta);
-				
-				} elseif ($percepcion->canto) {
-				
-				} else {
-					$carta = $this->cartaMasAlta($mano);
-				}	
-				
-		    };
+	    return new ProgramaAgenteReactivoSimple();
 	}
 	
 	/**
@@ -232,57 +259,53 @@ class Agente extends Jugador
 	}
 	
 	/**
-	 * Juega la carta en su turno.
+	 * Realiza la acción que corresponda en su turno.
 	 * @param Mano $mano
 	 */
 	public function turno($mano)
 	{
-		if ($mano->esPrimeraDeRonda()) {	
-			$carta = $this->cartaMasAlta($mano);
-		} else {
-			$cartaHumano = $mano->darUltimaCartaHumano();
-						
-			$carta = $this->cartaMasBajaQueMata($mano, $cartaHumano);
-			
-			if (!$carta) {
-				$carta = $this->cartaMasBaja($mano);
-			}
-		}
-		
-		$mano->agregarCartaAgente($carta);
-		
-		echo 'Carta jugada Agente: ' . $carta . "\n";
+	    $percepcion = $this->_crearPercepcion($mano);
+	    
+	    $programa = $this->programa;
+	    
+	    $accion = $programa($percepcion);
+	    
+	    $this->_realizarAccion($accion, $mano);
+	}
+
+	private function _crearPercepcion($mano)
+	{
+	    $cartasPropias = array_diff($this->_cartas, $mano->darCartasAgente());
+	    
+	    if ($mano->esPrimeraDeRonda()) {
+	        $cartaOponente = null;
+	    } else {
+	        $cartaOponente = $mano->darUltimaCartaHumano();
+	    }
+	    
+	    $cantoOponente = null;
+	    
+	    $percepcion = new Percepcion();
+	    $percepcion->cartasPropias = $cartasPropias;
+	    $percepcion->cartaOponente = $cartaOponente;
+	    $percepcion->cantoOponente = $cantoOponente;
+	       
+	    return $percepcion;
 	}
 	
-	public function cartaMasAlta($mano)
+	private function _realizarAccion($accion, $mano)
 	{
-		foreach (array_reverse($this->_cartas) as $c) {
-			if (!in_array($c, $mano->darCartasAgente())) {
-				return $c;
-			}
-		}
-	}
-	
-	public function cartaMasBajaQueMata($mano, $cartaHumano)
-	{
-		foreach ($this->_cartas as $c) {
-			if (!in_array($c, $mano->darCartasAgente()) && 
-			    $c->valor() > $cartaHumano->valor()) {
-			        
-				return $c;
-			}
-		}
-		
-		return null;
-	}
-	
-	public function cartaMasBaja($mano)
-	{
-		foreach ($this->_cartas as $c) {
-			if (!in_array($c, $mano->darCartasAgente())) {
-				return $c;
-			}
-		}
+	    switch ($accion) {
+	        case 'carta1':
+	            $mano->agregarCartaAgente($this->darCarta(0));        
+	            break;
+	        case 'carta2':
+	            $mano->agregarCartaAgente($this->darCarta(1));
+	            break;
+	        case 'carta3':
+	            $mano->agregarCartaAgente($this->darCarta(2));
+	            break;
+	    }
 	}
 }
 
@@ -311,8 +334,6 @@ class Humano extends Jugador
 		$carta = trim(fgets(STDIN));
 		
 		$mano->agregarCartaHumano($this->darCarta($carta));
-		
-		echo 'Carta jugada Humano: ' . $this->darCarta($carta) . "\n";
     }
    
     /**
@@ -369,7 +390,7 @@ abstract class Jugador
 	 */
 	public function esMano($es = null)
 	{
-		if ($es ===null) {
+		if ($es === null) {
 			return $this->_esMano;
 		} else {
 			$this->_esMano = $es;
@@ -625,6 +646,8 @@ class Mano
 	public function agregarCartaAgente($carta)
 	{ 
 		$this->_cartasAgente[] = $carta;
+		
+		echo 'Carta jugada Agente: ' . $carta . "\n";
 	}
 	
 	/**
@@ -634,6 +657,8 @@ class Mano
 	public function agregarCartaHumano($carta)
 	{
 		$this->_cartasHumano[] = $carta;
+		
+		echo 'Carta jugada Humano: ' . $carta . "\n";
 	}
 	
 	/**
