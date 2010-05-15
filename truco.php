@@ -430,10 +430,10 @@ class Juego
 	public $mazo;
 	
 	/**
-	 * Manos Jugadas
-	 * @var array
+	 * Mano en juego
+	 * @var Mano
 	 */
-	public $manos;
+	public $mano;
 		
 	/**
 	 * Crea el Juego con sus respectivos jugadores y mazo de cartas
@@ -471,7 +471,7 @@ class Juego
 		
 		$this->humano->mostrarCartas();
 		
-		$this->manos[] = new Mano();
+		$this->mano = new Mano();
 		
 		if ($this->humano->esMano()) {
 			$this->agente->esMano(true);
@@ -498,21 +498,11 @@ class Juego
 	}
 	
 	/**
-	 * Devuelve la mano actual desde el conjunto de manos jugadas
-	 */
-	public function manoActual() 
-	{
-		return $this->manos[count($this->manos) - 1];
-	}
-	
-	/**
 	 * Se juega la mano hasta que se termine
 	 */
 	public function jugarMano()
 	{
-        $manoActual = $this->manoActual();
-		
-		while (!$manoActual->termino()) {
+		while (!$this->mano->termino()) {
 			$this->turno();
 		}
 		
@@ -527,7 +517,7 @@ class Juego
 	{
 		$jugador = $this->quienJuega();
 				
-		$jugador->turno($this->manoActual());
+		$jugador->turno($this->mano);
 	}
 	
 	/**
@@ -538,20 +528,19 @@ class Juego
 	 */
 	public function quienJuega()
 	{
-		$manoActual = $this->manoActual();
 		$jugadorMano = $this->agente->esMano() ? $this->agente : $this->humano;
-		if($manoActual->esNueva())
+		if($this->mano->esNueva())
 			$jugador = $jugadorMano;
 		else {
-			if (count($manoActual->darCartasAgente()) > 
-			    count($manoActual->darCartasHumano())) {
+			if (count($this->mano->darCartasAgente()) > 
+			    count($this->mano->darCartasHumano())) {
 				$jugador = $this->humano;
-			} elseif (count($manoActual->darCartasAgente()) < 
-			          count($manoActual->darCartasHumano())) {
+			} elseif (count($this->mano->darCartasAgente()) < 
+			          count($this->mano->darCartasHumano())) {
 				$jugador = $this->agente;
 			} else {
-				$ultimaCartaHumano = $manoActual->darUltimaCartaHumano();
-				$ultimaCartaAgente = $manoActual->darUltimaCartaAgente();
+				$ultimaCartaHumano = $this->mano->darUltimaCartaHumano();
+				$ultimaCartaAgente = $this->mano->darUltimaCartaAgente();
 				if ($ultimaCartaHumano->valor() > $ultimaCartaAgente->valor()) {
 					$jugador = $this->humano;
 				} elseif ($ultimaCartaHumano->valor() < 
