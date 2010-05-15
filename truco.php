@@ -434,15 +434,29 @@ class Juego
 	 * @var Mano
 	 */
 	protected $_mano;
+	
+	/**
+	 * Puntos ganados por el agente en el juego
+	 * @var int
+	 */
+	protected $_puntosAgente;
+	
+	/**
+	 * Puntos ganados por el humano en el juego
+	 * @var int
+	 */
+	protected $_puntosHumano;
 		
 	/**
 	 * Crea el Juego con sus respectivos jugadores y mazo de cartas
 	 */
 	public function __construct()
 	{
-		$this->_agente = new Agente();
-		$this->_humano = new Humano();
-		$this->_mazo = new Mazo();
+		$this->_agente       = new Agente();
+		$this->_humano       = new Humano();
+		$this->_mazo         = new Mazo();
+		$this->_puntosAgente = 0;
+		$this->_puntosHumano = 0;
 	}
 	
 	/**
@@ -451,9 +465,8 @@ class Juego
 	 */
 	public function iniciar()
 	{
-		while (/*!$this->termino()*/true) {
+		while (!$this->_termino()) {
 			$this->iniciarMano();
-			
 			$this->jugarMano();
 		}
 	}
@@ -506,6 +519,8 @@ class Juego
 			$this->turno();
 		}
 		
+		$this->_procesarPuntos();
+		
 		$this->_humano->devolverCartas();
 		$this->_agente->devolverCartas();
 	}
@@ -516,7 +531,6 @@ class Juego
 	public function turno()	
 	{
 		$jugador = $this->quienJuega();
-				
 		$jugador->turno($this->_mano);
 	}
 	
@@ -528,7 +542,8 @@ class Juego
 	 */
 	public function quienJuega()
 	{
-		$jugadorMano = $this->_agente->esMano() ? $this->_agente : $this->_humano;
+		$jugadorMano = 
+		    $this->_agente->esMano() ? $this->_agente : $this->_humano;
 		if($this->_mano->esNueva())
 			$jugador = $jugadorMano;
 		else {
@@ -565,6 +580,28 @@ class Juego
 				 ": " . $this->_agente->darCarta($i) . "\n"; 
 		}
 	}
+	
+	/**
+	 * Devuelve true si el juego termino false en caso contrario
+	 */
+	protected function _termino()
+	{
+	    return ($this->_puntosAgente >= 15 || $this->_puntosHumano >= 15);
+	}
+	
+	/**
+	 * Aumenta el puntaje de cada jugador de acuerdo a lo ganado
+	 * en la mano correspondiente
+	 */
+	protected function _procesarPuntos()
+	{
+	    $this->_puntosAgente += $this->_mano->darPuntosAgente();
+	    $this->_puntosHumano += $this->_mano->darPuntosHumano();
+	    
+	    echo 'Puntos Humano: ' . $this->_puntosHumano . "\n";
+	    echo 'Puntos Agente: ' . $this->_puntosAgente . "\n";
+	}
+	
 }
 
 
@@ -581,6 +618,18 @@ class Mano
 	 * @var array
 	 */
 	protected $_cartasHumano;
+	
+	/**
+     * Puntos del agente en la mano
+     * @var int
+     */
+	protected $_puntosAgente;
+
+	/**
+	 * Puntos del humano en la mano
+	 * @var int
+	 */
+	protected $_puntosHumano;
 	
 	/**
 	 * Devuelve un valor booleano indicando si la mano terminó
@@ -600,13 +649,32 @@ class Mano
 					$ventaja--;
 				}
 			}
-			if (abs($ventaja) == 2) {
+			if ($ventaja == 2) {
 				$termino = true;
+				$this->_puntosAgente = 2;
+			} elseif ($ventaja == -2) {
+			    $termino = true;
+				$this->_puntosHumano = 2;
+			} elseif (abs($ventaja) == 1 && 
+			    $this->_cartasAgente[1] == $this->_cartasHumano[1]) {
+			        
+			    $termino = true;
+			    if ($this->_cartasAgente[0] > $this->_cartasHumano[0]) {
+			        $this->_puntosAgente = 2;
+			    } else {
+			        $this->_puntosHumano = 2;
+			    }
 			}
 		//Si se jugaron todas las cartas
 		} elseif (count($this->_cartasAgente) + 
 		          count($this->_cartasHumano) == 6) {
 			$termino = true;
+			
+            if ($this->_cartasAgente[2] > $this->_cartasHumano[2]) {
+    	        $this->_puntosAgente = 2;
+    	    } else {
+    	        $this->_puntosHumano = 2;
+    	    }
 		} 
 		
 		return $termino;
@@ -683,6 +751,22 @@ class Mano
 	{
 		return (count($this->_cartasHumano) == 0 && 
 		        count($this->_cartasAgente) == 0);
+	}
+	
+	/**
+	 * Devuelve los puntos ganados por el agente
+	 */
+	public function darPuntosAgente()
+	{ 
+		return $this->_puntosAgente;
+	}
+	
+	/**
+	 * Devuelve los puntos ganados por el humano
+	 */
+	public function darPuntosHumano()
+	{ 
+		return $this->_puntosHumano;
 	}
 }
 
