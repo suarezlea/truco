@@ -415,34 +415,34 @@ class Juego
      * Jugador Agente
      * @var Agente
      */
-	public $agente;
+	protected $_agente;
 	
 	/**
 	 * Jugador Humano
 	 * @var Humano
 	 */
-	public $humano;
+	protected $_humano;
 	
 	/**
 	 * Mazo de Cartas
 	 * @var Mazo
 	 */
-	public $mazo;
+	protected $_mazo;
 	
 	/**
 	 * Mano en juego
 	 * @var Mano
 	 */
-	public $mano;
+	protected $_mano;
 		
 	/**
 	 * Crea el Juego con sus respectivos jugadores y mazo de cartas
 	 */
 	public function __construct()
 	{
-		$this->agente = new Agente();
-		$this->humano = new Humano();
-		$this->mazo = new Mazo();
+		$this->_agente = new Agente();
+		$this->_humano = new Humano();
+		$this->_mazo = new Mazo();
 	}
 	
 	/**
@@ -465,20 +465,20 @@ class Juego
 	*/
 	public function iniciarMano()
 	{
-		$this->mazo->mezclar();
+		$this->_mazo->mezclar();
 		
 		$this->repartir();
 		
-		$this->humano->mostrarCartas();
+		$this->_humano->mostrarCartas();
 		
-		$this->mano = new Mano();
+		$this->_mano = new Mano();
 		
-		if ($this->humano->esMano()) {
-			$this->agente->esMano(true);
-			$this->humano->esMano(false);
+		if ($this->_humano->esMano()) {
+			$this->_agente->esMano(true);
+			$this->_humano->esMano(false);
 		} else {
-			$this->humano->esMano(true);
-			$this->agente->esMano(false);
+			$this->_humano->esMano(true);
+			$this->_agente->esMano(false);
 		}
 	}
 
@@ -491,9 +491,9 @@ class Juego
 			$alternar = !$alternar;
 		    
 			if($alternar)
-				$this->agente->recibirCarta($this->mazo->darCarta($i));
+				$this->_agente->recibirCarta($this->_mazo->darCarta($i));
 			else 
-				$this->humano->recibirCarta($this->mazo->darCarta($i));
+				$this->_humano->recibirCarta($this->_mazo->darCarta($i));
 		}
 	}
 	
@@ -502,12 +502,12 @@ class Juego
 	 */
 	public function jugarMano()
 	{
-		while (!$this->mano->termino()) {
+		while (!$this->_mano->termino()) {
 			$this->turno();
 		}
 		
-		$this->humano->devolverCartas();
-		$this->agente->devolverCartas();
+		$this->_humano->devolverCartas();
+		$this->_agente->devolverCartas();
 	}
 	
 	/**
@@ -517,7 +517,7 @@ class Juego
 	{
 		$jugador = $this->quienJuega();
 				
-		$jugador->turno($this->mano);
+		$jugador->turno($this->_mano);
 	}
 	
 	/**
@@ -528,24 +528,24 @@ class Juego
 	 */
 	public function quienJuega()
 	{
-		$jugadorMano = $this->agente->esMano() ? $this->agente : $this->humano;
-		if($this->mano->esNueva())
+		$jugadorMano = $this->_agente->esMano() ? $this->_agente : $this->_humano;
+		if($this->_mano->esNueva())
 			$jugador = $jugadorMano;
 		else {
-			if (count($this->mano->darCartasAgente()) > 
-			    count($this->mano->darCartasHumano())) {
-				$jugador = $this->humano;
-			} elseif (count($this->mano->darCartasAgente()) < 
-			          count($this->mano->darCartasHumano())) {
-				$jugador = $this->agente;
+			if (count($this->_mano->darCartasAgente()) > 
+			    count($this->_mano->darCartasHumano())) {
+				$jugador = $this->_humano;
+			} elseif (count($this->_mano->darCartasAgente()) < 
+			          count($this->_mano->darCartasHumano())) {
+				$jugador = $this->_agente;
 			} else {
-				$ultimaCartaHumano = $this->mano->darUltimaCartaHumano();
-				$ultimaCartaAgente = $this->mano->darUltimaCartaAgente();
+				$ultimaCartaHumano = $this->_mano->darUltimaCartaHumano();
+				$ultimaCartaAgente = $this->_mano->darUltimaCartaAgente();
 				if ($ultimaCartaHumano->valor() > $ultimaCartaAgente->valor()) {
-					$jugador = $this->humano;
+					$jugador = $this->_humano;
 				} elseif ($ultimaCartaHumano->valor() < 
 				          $ultimaCartaAgente->valor()) {
-					$jugador = $this->agente;
+					$jugador = $this->_agente;
 				} else {
 					$jugador = $jugadorMano;
 				}
@@ -562,7 +562,7 @@ class Juego
 	{
 		for ($i = 0; $i < 3; $i++) {
 			echo "Jugador 1 - Carta " . ((string)$i+1) . 
-				 ": " . $this->agente->darCarta($i) . "\n"; 
+				 ": " . $this->_agente->darCarta($i) . "\n"; 
 		}
 	}
 }
