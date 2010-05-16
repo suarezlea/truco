@@ -675,7 +675,8 @@ class Mano
 		          count($this->_cartasHumano) == 6) {
 			$termino = true;
 			
-            if ($this->_cartasAgente[2] > $this->_cartasHumano[2]) {
+            if ($this->_cartasAgente[2]->valor() > 
+                $this->_cartasHumano[2]->valor()) {
     	        $this->_puntosAgente = 2;
     	    } else {
     	        $this->_puntosHumano = 2;
