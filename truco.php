@@ -170,7 +170,7 @@ class ProgramaAgenteReactivoSimple
 {
     public function __invoke($percepcion)
     {
-        $accion = null;
+        $accion = null;		
         if ($percepcion->cartaOponente) {
     		// retorna la carta mas baja que mata a la carta del 
     		// oponente o en caso de no poder matar retorna la carta 
@@ -180,7 +180,6 @@ class ProgramaAgenteReactivoSimple
     		        $percepcion->cartasPropias, 
     		        $percepcion->cartaOponente
     		    );
-    	
     	} elseif ($percepcion->cantoOponente) {
     	    //todavia no hacemos nada
     	} else {
@@ -188,7 +187,7 @@ class ProgramaAgenteReactivoSimple
     	    //la mas alta
     		$accion = $this->_cartaMasAlta($percepcion->cartasPropias);
     	}   
-
+        
     	return $accion;
     }
     
@@ -200,12 +199,18 @@ class ProgramaAgenteReactivoSimple
 			}
 		}
 		
-		return 'carta' . (key(reset($cartasPropias)) + 1);
+		reset($cartasPropias);
+	    $n = key($cartasPropias) + 1;
+	    
+		return 'carta' . $n;
 	}
 	
     private function _cartaMasAlta($cartas)
 	{
-		return 'carta' . (key(end($cartas)) + 1);
+	    end($cartas);
+	    $n = key($cartas) + 1;
+
+		return 'carta' . $n;
 	}
 }
 
