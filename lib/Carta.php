@@ -88,4 +88,20 @@ class Carta
 		
 		return $valor;
 	}
+	
+	/**
+	 * Devuelve el palo de la carta
+	 */
+	public function darPalo()
+	{
+	    return $this->_palo;
+	}
+	
+	/**
+	 * Devuelve el número de la carta
+	 */
+    public function darNumero()
+	{
+	    return $this->_numero;
+	}
 }

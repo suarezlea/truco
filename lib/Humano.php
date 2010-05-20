@@ -19,10 +19,18 @@ class Humano extends Jugador
 	 */
     public function turno($mano) 
     {
-        echo 'Ingrese numero de carta a jugar (0, 1, 2): ' . "\n";			
-		$carta = trim(fgets(STDIN));
+        echo 
+			'Ingrese la opción: ' . "\n". 
+			'1 - Carta 1' . "\n" .
+			'2 - Carta 2' . "\n" .
+			'3 - Carta 3' . "\n" .
+			'4 - Envido' . "\n" .
+			'5 - Quiero' . "\n" .
+			'6 - No Quiero' . "\n";
+
+		$opcion = trim(fgets(STDIN));
 		
-		$mano->agregarCartaHumano($this->darCarta($carta));
+		$this->_realizarOpcion($opcion, $mano);
     }
    
     /**
@@ -36,4 +44,28 @@ class Humano extends Jugador
 			echo $carta. "\n";
 		}
     }
+    
+    private function _realizarOpcion($opcion, $mano)
+	{
+	    switch ($opcion) {
+	        case '1':
+	            $mano->agregarCartaHumano($this->darCarta(0));        
+	            break;
+	        case '2':
+	            $mano->agregarCartaHumano($this->darCarta(1));
+	            break;
+	        case '3':
+	            $mano->agregarCartaHumano($this->darCarta(2));
+	            break;
+	        case '4':
+	            $mano->agregarCantoHumano('envido');
+	            break;
+	        case '5':
+	            $mano->agregarCantoHumano('quiero');
+	            break;
+	        case '6':
+	            $mano->agregarCantoHumano('noquiero');
+	            break;
+	    }
+	}
 }

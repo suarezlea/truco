@@ -27,6 +27,18 @@ class Mano
 	protected $_puntosHumano;
 	
 	/**
+     * Canto del agente en la mano
+     * @var string
+     */
+	protected $_cantoAgente;
+
+	/**
+     * Canto del humano en la mano
+	 * @var int
+	 */
+	protected $_cantoHumano;
+	
+	/**
 	 * Devuelve un valor booleano indicando si la mano terminó
 	 */
 	public function termino()
@@ -164,4 +176,27 @@ class Mano
 	{ 
 		return $this->_puntosHumano;
 	}
+	
+	/**
+	 * Agrega el canto del agente respecto del envido en la mano
+	 * @param string $canto
+	 */
+	public function agregarCantoAgente($canto)
+	{ 
+		$this->_cantoAgente= $canto;
+		
+		echo 'Canto Agente: ' . $canto . "\n";
+	}
+	
+	/**
+	 * Agrega el canto del humano respecto del envido en la mano
+	 * @param string $carta
+	 */
+	public function agregarCantoHumano($canto)
+	{
+		$this->_cantoHumano = $canto;
+		
+		echo 'Canto Humano: ' . $canto . "\n";
+	}
+	
 }
