@@ -2,6 +2,7 @@
 
 require_once 'Jugador.php';
 require_once 'Agente.php';
+require_once 'AgenteReactivoSimple.php';
 require_once 'Humano.php';
 require_once 'Mazo.php';
 require_once 'Carta.php';
@@ -53,7 +54,7 @@ class Juego
 	 */
 	public function __construct()
 	{
-		$this->_agente       = new Agente();
+		$this->_agente       = new AgenteReactivoSimple();
 		$this->_humano       = new Humano();
 		$this->_mazo         = new Mazo();
 		$this->_puntosAgente = 0;

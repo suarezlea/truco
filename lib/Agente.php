@@ -1,29 +1,26 @@
 <?php
 
-class Agente extends Jugador
+abstract class Agente extends Jugador
 {
     /**
      * Variable que identifica el Programa Agente
      * @var Clousure
      */
-    public $programa;
+    protected $_programa;
 
     /**
      * Crea el agente y su programa agente
      */
 	public function __construct()
 	{
-	    $this->programa = $this->_crearProgramaAgente();
+	    $this->_programa = $this->_crearProgramaAgente();
 	}
 	
 	/**
 	 * Construye el Programa Agente
 	 */
-	protected function _crearProgramaAgente()
-	{
-	    return new ProgramaAgenteReactivoSimple();
-	}
-	
+	abstract protected function _crearProgramaAgente();
+		
 	/**
 	 * Recibe la carta $carta y se agrega al conjunto de cartas disponibles
 	 * ordenadas de mayor a menor 
@@ -57,7 +54,7 @@ class Agente extends Jugador
 	{
 	    $percepcion = $this->_crearPercepcion($mano);
 	    
-	    $programa = $this->programa;
+	    $programa = $this->_programa;
 	    
 	    $accion = $programa($percepcion);
 	    
