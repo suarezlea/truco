@@ -1,5 +1,14 @@
 <?php
-
+/**
+ * funcion Agente-Reactivo-Simple(percepcion) devuelve una accion
+ *     estatico: reglas, conjunto de reglas de condicion-accion
+ *
+ *     estado <- Interpretar-Entrada(percepcion)
+ *     regla  <- Regla-Coincidencia(estado, reglas)
+ *     accion <- Regla-Accion(regla)
+ *     
+ *     revolver accion
+ */
 class ProgramaAgenteReactivoSimple
 {
     public function __invoke($percepcion)
