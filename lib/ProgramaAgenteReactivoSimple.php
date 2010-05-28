@@ -7,7 +7,7 @@
  *     regla  <- Regla-Coincidencia(estado, reglas)
  *     accion <- Regla-Accion(regla)
  *     
- *     revolver accion
+ *     devolver accion
  */
 class ProgramaAgenteReactivoSimple
 {
