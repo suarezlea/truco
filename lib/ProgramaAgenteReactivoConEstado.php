@@ -33,7 +33,7 @@ class ProgramaAgenteReactivoConEstado
     
     public function __invoke($percepcion)
     {
-        $this->_estado->_actualizar($percepcion);
+        $this->_estado->actualizar($this->_accion, $percepcion);
         
         $this->_accion = $this->_resolverAccion();
         
