@@ -55,11 +55,13 @@ class Estado
     	            break;
     	        case 'carta2':
     	            $mano->agregarCartaAgente(
-    	                $percepcionAnterior->cartasPropias[0]
+    	                $percepcionAnterior->cartasPropias[1]
     	            );
     	            break;
     	        case 'carta3':
-    	            $mano->agregarCartaAgente($thisAnterior->darCarta(2));
+    	            $mano->agregarCartaAgente(
+    	                $percepcionAnterior->cartasPropias[2]
+    	            );
     	            break;
     	    }
 	    }
