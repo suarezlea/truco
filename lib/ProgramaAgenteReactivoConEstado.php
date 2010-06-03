@@ -1,18 +1,44 @@
 <?php
 /**
- * función Agente-Reactivo-Simple(percepcion) devuelve una acción
- *     estático: reglas, conjunto de reglas de condición-acción
+ * función Agente-Reactivo-Con-Estado(percepción) devuelve una acción
+ *     estático: estado, una descripción actual del estado del mundo
+ *     			 reglas, conjunto de reglas de condición-acción
+ *     			 acción, la acción más reciente, inicialmente ninguna
  *
- *     estado <- Interpretar-Entrada(percepción)
+ *     estado <- Actualizar-Estado(estado, acción, percepción)
  *     regla  <- Regla-Coincidencia(estado, reglas)
  *     acción <- Regla-Acción(regla)
  *     
  *     devolver acción
  */
-class ProgramaAgenteReactivoSimple
+class ProgramaAgenteReactivoConEstado
 {
+    /**
+     * Una descripción actual del estado del mundo
+     * @var Estado
+     */
+    private $_estado;
+    
+    /**
+     * La acción más reciente, inicialmente ninguna
+     * @var string
+     */
+    private $_accion;
+    
+    public function __construct()
+    {
+        $this->_estado = new Estado();
+        $this->_accion = null;
+    }
+    
     public function __invoke($percepcion)
     {
+        $this->_estado->_actualizar($percepcion);
+        
+        $this->_accion = $this->_resolverAccion();
+        
+        return $this->_accion;
+        
         $accion = null;		
         if ($percepcion->cartaOponente) {
     		// retorna la carta mas baja que mata a la carta del 
